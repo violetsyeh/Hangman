@@ -24,7 +24,6 @@ class Score(db.Model):
     date = db.Column(db.DateTime, nullable=True)
 
 
-# Put your Movie and Rating model classes here.
 
 
 ##############################################################################
