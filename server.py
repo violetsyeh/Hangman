@@ -34,13 +34,6 @@ def index():
     return render_template('homepage.html')
 
 
-# @app.route("/adjective")
-# def get_random_adjective():
-#     """Return a simple adjective."""
-
-#     return generate_secret_word()
-
-
 @app.route("/get_secret_word")
 def generate_secret_word():
 
