@@ -8,7 +8,15 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, Score
 import requests
 import random
-
+ADJECTIVES = [
+        'Juicy',
+        'Delicious',
+        'Aromatic',
+        'Ripe',
+        'Flavorful',
+        'Reasonably-Priced',
+        'Artisanally Hand-Crafted',
+]
 
 app = Flask(__name__)
 
@@ -20,17 +28,38 @@ app.secret_key = "ABC"
 # error.
 app.jinja_env.undefined = StrictUndefined
 
-
-@app.route('/')
+@app.route("/")
 def index():
     """Homepage."""
-    print generate_secret_word()
     return render_template('homepage.html')
 
-# @app.route('/get_secret_word', methods=['GET', 'POST'])
+
+# @app.route("/adjective")
+# def get_random_adjective():
+#     """Return a simple adjective."""
+
+#     return generate_secret_word()
+
+
+@app.route("/get_secret_word")
+def generate_secret_word():
+
+    # difficulty = request.form.get('difficulty')
+    url = 'http://app.linkedin-reach.io/words'
+    payload = {'difficulty': random.randint(1, 3)}
+    words = requests.get(url=url, params=payload)
+    words = str(words.text)
+    words = words.split()
+    secret_word = random.choice(words)
+    return len(secret_word) * '_ '
+
+
+
+####################################################################################
+# Helper Functions
+
 # def generate_secret_word():
 
-#     # difficulty = request.form.get('difficulty')
 #     url = 'http://app.linkedin-reach.io/words'
 #     payload = {'difficulty': random.randint(1, 3)}
 #     words = requests.get(url=url, params=payload)
@@ -38,21 +67,6 @@ def index():
 #     words = words.split()
 #     secret_word = random.choice(words)
 #     return secret_word
-
-
-
-####################################################################################
-# Helper Functions
-
-def generate_secret_word():
-
-    url = 'http://app.linkedin-reach.io/words'
-    payload = {'difficulty': random.randint(1, 3)}
-    words = requests.get(url=url, params=payload)
-    words = str(words.text)
-    words = words.split()
-    secret_word = random.choice(words)
-    return secret_word
 
 
 if __name__ == "__main__":
