@@ -2,10 +2,12 @@
 
 from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash,
-                   session, jsonify)
+                   session)
 from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, Score
+import requests
+import random
 
 
 app = Flask(__name__)
@@ -22,7 +24,35 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
+    print generate_secret_word()
     return render_template('homepage.html')
+
+# @app.route('/get_secret_word', methods=['GET', 'POST'])
+# def generate_secret_word():
+
+#     # difficulty = request.form.get('difficulty')
+#     url = 'http://app.linkedin-reach.io/words'
+#     payload = {'difficulty': random.randint(1, 3)}
+#     words = requests.get(url=url, params=payload)
+#     words = str(words.text)
+#     words = words.split()
+#     secret_word = random.choice(words)
+#     return secret_word
+
+
+
+####################################################################################
+# Helper Functions
+
+def generate_secret_word():
+
+    url = 'http://app.linkedin-reach.io/words'
+    payload = {'difficulty': random.randint(1, 3)}
+    words = requests.get(url=url, params=payload)
+    words = str(words.text)
+    words = words.split()
+    secret_word = random.choice(words)
+    return secret_word
 
 
 if __name__ == "__main__":
