@@ -34,7 +34,7 @@ def index():
     return render_template('homepage.html')
 
 
-@app.route("/get_secret_word")
+@app.route("/get-secret-word")
 def generate_secret_word():
 
     # difficulty = request.form.get('difficulty')
@@ -44,7 +44,16 @@ def generate_secret_word():
     words = str(words.text)
     words = words.split()
     secret_word = random.choice(words)
+    session['secret_word'] = secret_word
     return len(secret_word) * '_ '
+
+@app.route("/check-guess")
+def check_guess():
+
+    letter = request.args.get('letter_guess').lower()
+    
+
+    return letter
 
 
 
