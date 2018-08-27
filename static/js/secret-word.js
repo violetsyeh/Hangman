@@ -3,6 +3,7 @@
 function displayWord(results) {
     var word = results;
     $('#word').html(word);
+    console.log('secret word retrieved')
 }
 
 function getSecretWord() {
