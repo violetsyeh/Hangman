@@ -51,7 +51,7 @@ def generate_secret_word():
 @app.route("/check-guess")
 def check_guess():
 
-    letter = request.args.get("letter-guess")
+    letter = request.args.get("letter")
     print letter
     # letter = letter.lower()
     secret_word = session['secret_word']

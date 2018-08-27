@@ -7,7 +7,7 @@ function displayWord(results) {
 }
 
 function getSecretWord() {
-    $.get('/get-secret-word', displayWord);
+    $.get("/get-secret-word", displayWord);
 }
 
 $( document ).ready(getSecretWord);

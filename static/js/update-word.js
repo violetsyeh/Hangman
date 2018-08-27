@@ -1,8 +1,9 @@
 "use strict";
 
-function displayUpdatedWord(result) {
+function displayUpdatedWord(results) {
 	console.log('start display updatedword');
-    var updated_word = result['letter-guess'];
+	console.log(results)
+    var updated_word = results;
     $('#word').html(updated_word);
     console.log('word updated');
 }
@@ -11,13 +12,13 @@ function getUpdatedWord(evt) {
 	evt.preventDefault();
 
 	var formInput = {
-		"letter-guess": $("#letter-guess-field").val()
+		"letter": $("#letter-guess-field").val()
 	};
 
 	console.log(formInput);
 
 	console.log('start getting updatedword');
-    $.get('/check-guess', formInput, displayUpdatedWord);
+    $.get("/check-guess", formInput, displayUpdatedWord);
     console.log("finished sending AJAX");
 }
 
