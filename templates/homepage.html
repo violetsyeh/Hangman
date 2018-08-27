@@ -41,9 +41,7 @@
 	
   <p class="lead"><span id="word"></span></p>
   <script src="/static/js/secret-word.js"></script>
-
-  <p class="lead"><span id="update-word"></span></p>
-  <script src="/static/js/update-word.js"></script>
+  
 
 
 
@@ -67,19 +65,19 @@ Difficulty </br>
 <br>
 
 
-  <form action="/check-guess" method="GET">
+  <form action="/check-guess" method="GET" id="updated-word">
   <div class="form-group">
     <label for="formGroupExampleInput">Guess a letter</label>
-    <input type="text" class="form-control" name = "letter_guess" id="formGroupExampleInput" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter.">
+    <input type="text" class="form-control" name="letter-guess-field" id="formGroupExampleInput" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter.">
   </div>
   <div class="form-group">
     <label for="formGroupExampleInput2">Feeling Confident?</label>
     <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Solve the whole word" pattern="[A-Za-z]{3}" title="Please only enter valid characters.">
   </div>
-  <button type="submit" class="btn btn-primary" id="updated-word">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 
 </form>
-
+<script src="/static/js/update-word.js"></script>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

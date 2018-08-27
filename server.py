@@ -45,15 +45,33 @@ def generate_secret_word():
     words = words.split()
     secret_word = random.choice(words)
     session['secret_word'] = secret_word
+    print secret_word
     return len(secret_word) * '_ '
 
 @app.route("/check-guess")
 def check_guess():
 
-    letter = request.args.get('letter_guess').lower()
+    letter = request.args.get("letter-guess")
+    print letter
+    # letter = letter.lower()
+    secret_word = session['secret_word']
+    print secret_word
+    result = ''
+
+    if letter in secret_word:
+        for i in range(len(secret_word)):
+            if secret_word[i] == letter:
+                result = result + letter
+            else:
+                result = result + '_ '
+        session['secret_word'] = result
+        return result
+    elif letter not in secret_word:
+        flash('That letter is not in the secret word')
+        return redirect('/')
     
 
-    return letter
+
 
 
 
