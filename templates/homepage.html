@@ -30,16 +30,13 @@
   </div>
 </nav>
 <br>
-  {% with messages = get_flashed_messages() %}
-      {% for message in messages %}
-          <div class="alert alert-warning">{{ message }}</div>
-      {% endfor %}
-  {% endwith %}
 
   <p class="lead">Guess the Secret Word</p>
   <br>
-	
+
   <p class="lead"><span id="word"></span></p>
+  <br>
+  <p class="lead"><span id="incorrect-answer"></span></p>
   <script src="/static/js/secret-word.js"></script>
   
 

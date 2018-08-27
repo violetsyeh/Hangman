@@ -1,11 +1,18 @@
 "use strict";
 
 function displayUpdatedWord(results) {
-	console.log('start display updatedword');
+	console.log('start displaying updatedword');
 	console.log(results)
-    var updated_word = results;
-    $('#word').html(updated_word);
-    console.log('word updated');
+    // $('#word').html(results['updated_guess']);
+    // console.log('word updated');
+
+    if (results['answer'] === 'incorrect'){
+    	$('#word').html(results['updated_guess']);
+    	$('#incorrect-answer').html('That letter is not in the secret word');
+    } else if (results['answer'] === 'correct'){
+    	$('#word').html(results['updated_guess']);
+    	$('#incorrect-answer').html('');
+    };
 }
 
 function getUpdatedWord(evt) {
