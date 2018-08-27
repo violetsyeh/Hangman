@@ -8,15 +8,6 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import connect_to_db, db, Score
 import requests
 import random
-ADJECTIVES = [
-        'Juicy',
-        'Delicious',
-        'Aromatic',
-        'Ripe',
-        'Flavorful',
-        'Reasonably-Priced',
-        'Artisanally Hand-Crafted',
-]
 
 app = Flask(__name__)
 
@@ -45,48 +36,53 @@ def generate_secret_word():
     words = words.split()
     secret_word = random.choice(words)
     session['secret_word'] = secret_word
+    session['word_guess'] = len(secret_word) * '_ '
+    session['num_guess'] = 0
+    session['correct_guesses'] = []
     print secret_word
     return len(secret_word) * '_ '
 
 @app.route("/check-guess")
 def check_guess():
 
-    letter = request.args.get("letter")
-    print letter
-    # letter = letter.lower()
+    word_guess = session['word_guess']
     secret_word = session['secret_word']
-    print secret_word
+    num_guess = session['num_guess']
     result = ''
 
-    if letter in secret_word:
-        for i in range(len(secret_word)):
-            if secret_word[i] == letter:
-                result = result + letter
-            else:
-                result = result + '_ '
-        session['secret_word'] = result
-        return result
-    elif letter not in secret_word:
-        flash('That letter is not in the secret word')
-        return redirect('/')
-    
+    while num_guess < 7:
+
+        letter = request.args.get("letter").lower()
+        
+
+        if letter in secret_word:
+            for i in range(len(secret_word)):
+                if secret_word[i] == letter:
+                    result = result + letter
+                elif secret_word[i] in session['correct_guesses']:
+                    result = result + secret_word[i]
+                else:
+                    result = result + '_ '
+            session['num_guess'] += 1
+            # print session['num_guess']
+            session['word_guess'] = result
+            session['correct_guesses'].append(letter)
+            print session['correct_guesses']
+            return result
+        else:
+            flash('That letter is not in the secret word')
+            session['num_guess'] += 1
+            # print session['num_guess']
+            session['word_guess'] = result
+            session['incorrect_guesses'].append(letter)
+            return result
 
 
 
 
 
 ####################################################################################
-# Helper Functions
 
-# def generate_secret_word():
-
-#     url = 'http://app.linkedin-reach.io/words'
-#     payload = {'difficulty': random.randint(1, 3)}
-#     words = requests.get(url=url, params=payload)
-#     words = str(words.text)
-#     words = words.split()
-#     secret_word = random.choice(words)
-#     return secret_word
 
 
 if __name__ == "__main__":
