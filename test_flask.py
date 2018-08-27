@@ -60,12 +60,20 @@ class FlaskSessionTest(TestCase):
 	def setUp(self):
 
 		app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = "ABC"
-        self.client = app.test_client()
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
 
-        with self.client as c:
-        	with c.session_transaction() as sess:
-        		
+		with self.client as c:
+			with c.session_transaction() as sess:
+				sess['secret_word'] = 'cat'
+				sess['guess_word'] = '_ _ _'
+				sess['num_guess'] = 1
+
+	def test_session_check_word(self):
+		"""Test session in "/check-word" route."""
+
+		result = self.client.get('/check-word')
+		self.assertIsInstance(result.data, str)
 
 
 
