@@ -19,6 +19,8 @@ app.secret_key = "ABC"
 # error.
 app.jinja_env.undefined = StrictUndefined
 
+MAX_ERRORS = 6
+
 @app.route("/")
 def index():
     """Homepage."""
@@ -35,11 +37,13 @@ def generate_secret_word():
     words = str(words.text)
     words = words.split()
     secret_word = random.choice(words)
+
     session['secret_word'] = secret_word
     session['word_guess'] = len(secret_word) * '_ '
-    session['num_guess'] = 0
+    session['num_incorrect_guess'] = 0
     session['correct_guesses'] = []
     session['incorrect_guesses'] = []
+
     print secret_word
     return len(secret_word) * '_ '
 
@@ -48,11 +52,11 @@ def check_guess():
 
     word_guess = session['word_guess']
     secret_word = session['secret_word']
-    num_guess = session['num_guess']
+    num_guess = session['num_incorrect_guess']
     updated_guess = ''
     result = {}
 
-    while num_guess < 7:
+    while num_guess <= MAX_ERRORS:
 
         letter = request.args.get("letter").lower()
         
@@ -72,14 +76,20 @@ def check_guess():
             result['answer'] = 'correct'
             return jsonify(result)
         else:
-            # flash('That letter is not in the secret word')
-            session['num_guess'] += 1
+            session['num_incorrect_guess'] += 1
             session['incorrect_guesses'].append(letter)
             result['updated_guess'] = word_guess
             result['answer'] = 'incorrect'
             print session['word_guess']
             return jsonify(result)
-    # flash('You have exceeded your six incorrect guesses')
+    return redirect('/check-game-status')
+
+
+@app.route('/check-game-status')
+def check_game_status():
+
+    if session['num_incorrect_guess'] == 6:
+        pass
     
 
 

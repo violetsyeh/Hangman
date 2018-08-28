@@ -65,11 +65,11 @@ Difficulty </br>
   <form action="/check-guess" method="GET" id="updated-word">
   <div class="form-group">
     <label for="formGroupExampleInput">Guess a letter</label>
-    <input type="text" class="form-control" name="letter-guess-field" id="letter-guess-field" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter.">
+    <input type="text" class="form-control" name="letter-guess-field" id="letter-guess-field" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter." onfocus="this.placeholder = ''" onblur="this.placeholder = ''">
   </div>
   <div class="form-group">
     <label for="formGroupExampleInput2">Feeling Confident?</label>
-    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Solve the whole word" pattern="[A-Za-z]{3}" title="Please only enter valid characters.">
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Solve the whole word" pattern="[A-Za-z]{3}" title="Please only enter valid characters." onfocus="this.placeholder = ''" onblur="this.placeholder = ''">
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 
