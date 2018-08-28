@@ -25,6 +25,7 @@ MAX_GUESSES = 6
 @app.route("/")
 def index():
     """Homepage."""
+    session.clear()
     return render_template('homepage.html')
 
 
@@ -43,7 +44,7 @@ def generate_secret_word():
     session['secret_word'] = secret_word
     session['updated_guess'] = len(secret_word) * '_ '
     session['num_guesses_remain'] = MAX_GUESSES
-    session['correct_guesses'] = []
+    session['correct_guesses'] = ''
     session['incorrect_guesses'] = ''
 
     print secret_word
@@ -62,55 +63,58 @@ def check_guess():
 
         letter = request.args.get("letter").lower()
         
+        if check_repeat_letter(letter):
 
-        if letter in secret_word:
-            for i in range(len(secret_word)):
-                if secret_word[i] == letter:
-                    updated_guess = updated_guess + letter
-                elif secret_word[i] in session['correct_guesses']:
-                    updated_guess = updated_guess + secret_word[i]
+            if letter in secret_word:
+                for i in range(len(secret_word)):
+                    if secret_word[i] == letter:
+                        updated_guess = updated_guess + letter
+                    elif secret_word[i] in session['correct_guesses']:
+                        updated_guess = updated_guess + secret_word[i]
+                    else:
+                        updated_guess = updated_guess + '_ '
+                session['updated_guess'] = updated_guess
+                session['correct_guesses'] = session['correct_guesses'] + letter                
+
+                if secret_word == session['updated_guess']:
+                    return redirect('/check-game-status')
                 else:
-                    updated_guess = updated_guess + '_ '
-            session['updated_guess'] = updated_guess
-            session['correct_guesses'].append(letter)
-            
-
-            if secret_word == session['updated_guess']:
-                return redirect('/check-game-status')
+                    result['updated_guess'] = session['updated_guess']
+                    result['answer'] = 'correct'
+                    result['num_guesses_remain'] = num_guess
+                    return jsonify(result)
             else:
-                result['updated_guess'] = session['updated_guess']
-                result['answer'] = 'correct'
-                result['num_guesses_remain'] = num_guess
+                session['num_guesses_remain'] -= 1
+                session['incorrect_guesses'] = session['incorrect_guesses'] + letter + ' '
+
+                if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
+                    return redirect('/check-game-status')
+                else: 
+                    result['updated_guess'] = session['updated_guess']
+                    result['answer'] = 'incorrect'
+                    result['num_guesses_remain'] = session['num_guesses_remain']
+                    result['incorrect_guesses'] = session['incorrect_guesses']
+                    
                 return jsonify(result)
         else:
-            session['num_guesses_remain'] -= 1
-            session['incorrect_guesses'] = session['incorrect_guesses'] + letter + ' '
-
-            if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
-                return redirect('/check-game-status')
-            else: 
-                result['updated_guess'] = session['updated_guess']
-                result['answer'] = 'incorrect'
-                result['num_guesses_remain'] = session['num_guesses_remain']
-                result['incorrect_guesses'] = session['incorrect_guesses']
-                
+            result['letter'] = 'tried already'
             return jsonify(result)
-    return redirect('/check-game-status')
+        return redirect('/check-game-status')
 
 
 @app.route('/check-game-status')
 def check_game_status():
 
-    result = {}
+    results = {}
 
     if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
-        result['game-status'] = 'game lost'
-        result['updated_guess'] = session['updated_guess']
-        return jsonify(result)
+        results['game-status'] = 'game lost'
+        results['updated_guess'] = session['updated_guess']
+        return jsonify(results)
     elif session['secret_word'] == session['updated_guess']:
-        result['game-status'] = 'game won'
-        result['updated_guess'] = session['updated_guess']
-        return jsonify(result)
+        results['game-status'] = 'game won'
+        results['updated_guess'] = session['updated_guess']
+        return jsonify(results)
         
     
 
@@ -119,7 +123,15 @@ def check_game_status():
 
 
 ####################################################################################
+#Helper functions
 
+def check_repeat_letter(letter):
+    print session['incorrect_guesses']
+    print session['correct_guesses']
+    if letter in session['correct_guesses'] or session['incorrect_guesses']:
+        return False 
+    else:
+        return True
 
 
 if __name__ == "__main__":
