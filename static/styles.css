@@ -1,0 +1,13 @@
+.center {
+    text-align: center;
+}
+
+
+body{
+  /*background-color: rgb(211,183,185, 0.55);*/
+  font-family: 'Didact Gothic', sans-serif;
+}
+
+.navbar-default{
+	background: rgb(77,106,109);
+}
