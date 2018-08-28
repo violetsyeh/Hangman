@@ -74,7 +74,7 @@ def check_guess():
                     else:
                         updated_guess = updated_guess + '_ '
                 session['updated_guess'] = updated_guess
-                session['correct_guesses'] = session['correct_guesses'] + letter                
+                session['correct_guesses'] = session['correct_guesses'] + letter             
 
                 if secret_word == session['updated_guess']:
                     return redirect('/check-game-status')
@@ -97,7 +97,7 @@ def check_guess():
                     
                 return jsonify(result)
         else:
-            result['letter'] = 'tried already'
+            result['guess'] = 'tried already'
             return jsonify(result)
         return redirect('/check-game-status')
 

@@ -29,8 +29,8 @@ function displayUpdatedWord(results) {
     	$('#game-status-modal').modal()
     	$('#modal-text').html('You ran out of guesses, try again!');
     	$('#letter-tried-already').html('');
-    	
-    } else if (results['letter'] === 'tried already'){
+
+    } else if (results['guess'] === 'tried already'){
     	$('#letter-tried-already').html("You already tried this letter.")
     };
 
