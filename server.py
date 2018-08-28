@@ -19,7 +19,8 @@ app.secret_key = "ABC"
 # error.
 app.jinja_env.undefined = StrictUndefined
 
-MAX_ERRORS = 6
+MAX_ERRORS_COUNTER = 0
+MAX_GUESSES = 6
 
 @app.route("/")
 def index():
@@ -32,7 +33,8 @@ def generate_secret_word():
 
     # difficulty = request.form.get('difficulty')
     url = 'http://app.linkedin-reach.io/words'
-    payload = {'difficulty': random.randint(1, 3)}
+    # payload = {'difficulty': random.randint(1, 3)}
+    payload = {'difficulty': 1}
     words = requests.get(url=url, params=payload)
     words = str(words.text)
     words = words.split()
@@ -40,7 +42,7 @@ def generate_secret_word():
 
     session['secret_word'] = secret_word
     session['updated_guess'] = len(secret_word) * '_ '
-    session['num_guesses_remain'] = 6
+    session['num_guesses_remain'] = MAX_GUESSES
     session['correct_guesses'] = []
     session['incorrect_guesses'] = ''
 
@@ -56,7 +58,7 @@ def check_guess():
     updated_guess = ''
     result = {}
 
-    while num_guess <= MAX_ERRORS:
+    while num_guess >= MAX_ERRORS_COUNTER:
 
         letter = request.args.get("letter").lower()
         
@@ -71,22 +73,27 @@ def check_guess():
                     updated_guess = updated_guess + '_ '
             session['updated_guess'] = updated_guess
             session['correct_guesses'].append(letter)
+            
 
             if secret_word == session['updated_guess']:
                 return redirect('/check-game-status')
-
-            result['updated_guess'] = updated_guess
-            result['answer'] = 'correct'
-            result['num_guesses_remain'] = num_guess
-            return jsonify(result)
+            else:
+                result['updated_guess'] = session['updated_guess']
+                result['answer'] = 'correct'
+                result['num_guesses_remain'] = num_guess
+                return jsonify(result)
         else:
             session['num_guesses_remain'] -= 1
             session['incorrect_guesses'] = session['incorrect_guesses'] + letter + ' '
-            result['updated_guess'] = updated_guess
-            result['answer'] = 'incorrect'
-            result['num_guesses_remain'] = session['num_guesses_remain']
-            result['incorrect_guesses'] = session['incorrect_guesses']
-            print session['updated_guess']
+
+            if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
+                return redirect('/check-game-status')
+            else: 
+                result['updated_guess'] = session['updated_guess']
+                result['answer'] = 'incorrect'
+                result['num_guesses_remain'] = session['num_guesses_remain']
+                result['incorrect_guesses'] = session['incorrect_guesses']
+                
             return jsonify(result)
     return redirect('/check-game-status')
 
@@ -96,12 +103,13 @@ def check_game_status():
 
     result = {}
 
-    if session['num_guesses_remain'] == MAX_ERRORS:
-        result['game-status'] = 'game won'
+    if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
+        result['game-status'] = 'game lost'
         result['updated_guess'] = session['updated_guess']
         return jsonify(result)
     elif session['secret_word'] == session['updated_guess']:
-        result['game-status'] = 'game lost'
+        result['game-status'] = 'game won'
+        result['updated_guess'] = session['updated_guess']
         return jsonify(result)
         
     

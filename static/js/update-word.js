@@ -24,7 +24,7 @@ function displayUpdatedWord(results) {
 
     } else if (results['game-status'] === 'game lost'){
     	$('#game-status-modal').modal()
-    	$('#modal-text').html('You ran out of guesses!');
+    	$('#modal-text').html('You ran out of guesses, try again!');
     };
 
     $("#updated-word")[0].reset();
