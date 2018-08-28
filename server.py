@@ -40,9 +40,9 @@ def generate_secret_word():
 
     session['secret_word'] = secret_word
     session['word_guess'] = len(secret_word) * '_ '
-    session['num_incorrect_guess'] = 0
+    session['num_guesses_remain'] = 6
     session['correct_guesses'] = []
-    session['incorrect_guesses'] = []
+    session['incorrect_guesses'] = ''
 
     print secret_word
     return len(secret_word) * '_ '
@@ -52,7 +52,7 @@ def check_guess():
 
     word_guess = session['word_guess']
     secret_word = session['secret_word']
-    num_guess = session['num_incorrect_guess']
+    num_guess = session['num_guesses_remain']
     updated_guess = ''
     result = {}
 
@@ -74,12 +74,15 @@ def check_guess():
             print session['word_guess']
             result['updated_guess'] = updated_guess
             result['answer'] = 'correct'
+            result['num_guesses_remain'] = num_guess
             return jsonify(result)
         else:
-            session['num_incorrect_guess'] += 1
-            session['incorrect_guesses'].append(letter)
+            session['num_guesses_remain'] -= 1
+            session['incorrect_guesses'] = session['incorrect_guesses'] + letter + ' '
             result['updated_guess'] = word_guess
             result['answer'] = 'incorrect'
+            result['num_guesses_remain'] = session['num_guesses_remain']
+            result['incorrect_guesses'] = session['incorrect_guesses']
             print session['word_guess']
             return jsonify(result)
     return redirect('/check-game-status')
@@ -88,8 +91,15 @@ def check_guess():
 @app.route('/check-game-status')
 def check_game_status():
 
-    if session['num_incorrect_guess'] == 6:
-        pass
+    result = {}
+
+    if session['num_guesses_remain'] == MAX_ERRORS:
+        result['answer'] = 'game won'
+        return result
+    elif session['secret_word'] == session['word_guess']:
+        result['answer'] = 'game lost'
+        return result
+        
     
 
 

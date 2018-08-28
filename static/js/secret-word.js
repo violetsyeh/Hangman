@@ -3,6 +3,7 @@
 function displayWord(results) {
     var word = results;
     $('#word').html(word);
+    $('#num-guesses-remain').html(' 6')
     console.log('secret word retrieved')
 }
 
