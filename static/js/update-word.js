@@ -7,7 +7,7 @@ function displayUpdatedWord(results) {
     if (results['answer'] === 'incorrect'){
     	$('#word').html(results['updated_guess']);
     	console.log('word updated');
-    	// $('#incorrect-answer').html('That letter is not in the secret word');
+    	$('#incorrect-answer').html('That letter is not in the secret word');
     	$('#num-guesses-remain').html(results['num_guesses_remain']);
     	$('#incorrect-guesses').html(results['incorrect_guesses']);
     	$('#letter-tried-already').html('');

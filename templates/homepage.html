@@ -10,14 +10,14 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  	<a class="navbar-brand" href="/">Guessing Word Game</a>
+  	<a class="navbar-brand" href="">Guessing Word Game</a>
   	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
    	 <span class="navbar-toggler-icon"></span>
   	</button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link" href="/">Restart Game <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="" id="play-again">Restart Game <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Features</a>
@@ -45,7 +45,7 @@
 
   <p>Incorrect Guesses: <span id="incorrect-guesses"></span></p>
   <strong><p class="lead"><span id="letter-tried-already"></span></p></strong>
-
+  <strong><p class="lead"><span id="incorrect-answer"></span></p></strong>
 
 <br>
 Difficulty </br>
@@ -96,7 +96,7 @@ Difficulty </br>
         <p><span id='modal-text'></span></p>
       </div>
       <div class="modal-footer">
-        <a href="/"><button type="button" class="btn btn-primary">Play Again</button></a>
+        <a href="/"><button type="button" class="btn btn-primary" id="play-again">Play Again</button></a>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
@@ -107,6 +107,7 @@ Difficulty </br>
 
 
 <script src="/static/js/update-word.js"></script>
+<script src="/static/js/play-again.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </body>

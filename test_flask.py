@@ -25,6 +25,8 @@ class FlaskTestsBasic(TestCase):
 		self.assertEqual(result.status_code, 200)
 		self.assertIn('Guess the Secret Word', result.data)
 		self.assertTrue('homepage.html')
+		self.assertIn('You have ', result.data)
+		self.assertIn(' guesses left', result.data)
 
 
 class FlaskRouteTests(TestCase):
@@ -63,7 +65,7 @@ class FlaskSessionIncorrectGuessTest(TestCase):
 				"""Assign session values."""
 				sess['secret_word'] = 'test'
 				sess['updated_guess'] = '_ _ _ _'
-				sess['num_guesses_remain'] = 4
+				sess['num_guesses_remain'] = 6
 				sess['correct_guesses'] = ''
 				sess['incorrect_guesses'] = ''
 
@@ -73,7 +75,7 @@ class FlaskSessionIncorrectGuessTest(TestCase):
 		result = self.client.get('/check-guess', query_string={"letter": 'q'}, follow_redirects=True)
 		self.assertIsInstance(result.data, str)
 		self.assertTrue('homepage.html')
-		self.assertIn('{"answer":"incorrect","incorrect_guesses":"q ","num_guesses_remain":3,"updated_guess":"_ _ _ _"}\n', result.data)
+		self.assertIn('{"answer":"incorrect","incorrect_guesses":"q ","num_guesses_remain":5,"updated_guess":"_ _ _ _"}\n', result.data)
 
 class FlaskSessionCorrectGuessTest(TestCase):
 	
@@ -89,28 +91,92 @@ class FlaskSessionCorrectGuessTest(TestCase):
 				"""Assign session values."""
 				sess['secret_word'] = 'test'
 				sess['updated_guess'] = '_ _ _ _'
-				sess['num_guesses_remain'] = 4
+				sess['num_guesses_remain'] = 6
 				sess['correct_guesses'] = ''
 				sess['incorrect_guesses'] = ''
 
-	def test_session_check_incorrect_guess(self):
+	def test_session_check_correct_guess(self):
 		"""Test session correct guess in "/check-guess" route."""
 
 		result = self.client.get('/check-guess', query_string={"letter": 't'}, follow_redirects=True)
 		self.assertIsInstance(result.data, str)
 		self.assertTrue('homepage.html')
-		self.assertIn('{"answer":"correct","num_guesses_remain":4,"updated_guess":"t_ _ t"}\n', result.data)
+		self.assertIn('{"answer":"correct","num_guesses_remain":6,"updated_guess":"t_ _ t"}\n', result.data)
 
+class FlaskSessionWonGameTest(TestCase):
 
-	# def test_check_game_status(self):
-	# 	"""Test "/check-game-status" route."""
+	def setUp(self):
+		"""Set up to be done before every test."""
 
-	# 	result = self.client.get('/check-game-status')
-	# 	# self.assertIn('Play Again', result.data)
-	# 	# self.assertTrue('homepage.html')
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
 
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = 't _ s t'
+				sess['num_guesses_remain'] = 3
+				sess['correct_guesses'] = 'ts'
+				sess['incorrect_guesses'] = 'q w a'
 
+	def test_session_check_win_game(self):
+		"""Test "/check-game-status" winning."""
 
+		result = self.client.get('/check-guess', query_string={"letter": "e"}, follow_redirects=True)
+		self.assertIn('{"game_status":"game won","updated_guess":"test"}\n', result.data)
+		self.assertTrue('homepage.html')
+
+class FlaskSessionLostGameTest(TestCase):
+
+	def setUp(self):
+		"""Set up to be done before every test."""
+
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
+
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = '_ e _ _'
+				sess['num_guesses_remain'] = 1
+				sess['correct_guesses'] = 'e'
+				sess['incorrect_guesses'] = 'q w a z k'
+
+	def test_session_check_lost_game(self):
+		"""Test "/check-game-status" winning."""
+
+		result = self.client.get('/check-guess', query_string={"letter": "y"}, follow_redirects=True)
+		self.assertIn('{"game_status":"game lost","updated_guess":"_ e _ _"}\n', result.data)
+		self.assertTrue('homepage.html')
+
+class FlaskSessionRepeatGuess(TestCase):
+
+	def setUp(self):
+		"""Set up to be done before every test."""
+
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
+
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = 't _ _ t'
+				sess['num_guesses_remain'] = 5
+				sess['correct_guesses'] = 't'
+				sess['incorrect_guesses'] = 'z'
+
+	def test_session_repeat_guess(self):
+		"""Test helper function check_repeat_letter."""
+
+		result = self.client.get('/check-guess', query_string={"letter": "z"}, follow_redirects=True)
+		self.assertIn('{"guess":"tried already"}\n', result.data)
+		self.assertTrue('homepage.html')
 
 ##############################################################################
 
