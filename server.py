@@ -21,6 +21,8 @@ app.jinja_env.undefined = StrictUndefined
 
 MAX_ERRORS_COUNTER = 0
 MAX_GUESSES = 6
+WORDS_URL = 'http://app.linkedin-reach.io/words'
+
 
 @app.route("/")
 def index():
@@ -30,16 +32,16 @@ def index():
 
 
 @app.route("/get-secret-word", methods=['GET'])
-def generate_secret_word():
+def display_secret_word():
 
     # difficulty = request.form.get('difficulty')
-    url = 'http://app.linkedin-reach.io/words'
     # payload = {'difficulty': random.randint(1, 3)}
-    payload = {'difficulty': 1}
-    words = requests.get(url=url, params=payload)
-    words = str(words.text)
-    words = words.split()
-    secret_word = random.choice(words)
+    # payload = {'difficulty': 1}
+    # words = requests.get(url=WORDS_URL, params=payload)
+    # words = str(words.text)
+    # words = words.split()
+    # secret_word = random.choice(words)
+    secret_word = generate_secret_word(None)
 
     session['secret_word'] = secret_word
     session['updated_guess'] = len(secret_word) * '_ '
@@ -49,6 +51,18 @@ def generate_secret_word():
 
     print secret_word
     return len(secret_word) * '_ '
+
+@app.route("/change-difficulty", methods=['GET'])
+def change_difficulty():
+
+    difficulty = int(request.args.get("difficulty"))
+    print difficulty
+    secret_word = generate_secret_word(difficulty)
+    print secret_word
+
+    return len(secret_word) * '_ '
+    
+
 
 @app.route("/check-guess", methods=['GET'])
 def check_guess():
@@ -120,7 +134,7 @@ def check_game_status():
         results['game_status'] = 'game lost'
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
-        
+
     elif session['secret_word'] == session['updated_guess']:
         results['game_status'] = 'game won'
         results['updated_guess'] = session['updated_guess']
@@ -143,6 +157,24 @@ def check_repeat_letter(letter):
         return False 
     else:
         return True
+
+def generate_secret_word(difficulty):
+
+    if difficulty: 
+        payload = {'difficulty': difficulty}
+        words = requests.get(url=WORDS_URL, params=payload)
+        words = str(words.text)
+        words = words.split()
+        secret_word = random.choice(words)
+        return secret_word
+    else:
+        payload = {'difficulty': random.randint(1, 3)}
+        words = requests.get(url=WORDS_URL, params=payload)
+        words = str(words.text)
+        words = words.split()
+        secret_word = random.choice(words)
+
+        return secret_word
 
 
 if __name__ == "__main__":
