@@ -75,7 +75,7 @@ class FlaskSessionIncorrectGuessTest(TestCase):
 		result = self.client.get('/check-guess', query_string={"letter": 'q'}, follow_redirects=True)
 		self.assertIsInstance(result.data, str)
 		self.assertTrue('homepage.html')
-		self.assertIn('{"answer":"incorrect","incorrect_guesses":"q ","num_guesses_remain":5,"updated_guess":"_ _ _ _"}\n', result.data)
+		self.assertIn('{"answer":"incorrect","incorrect_guesses":"q ","num_guesses_remain":5,"updated_guess":"_ _ _ _ "}\n', result.data)
 
 class FlaskSessionCorrectGuessTest(TestCase):
 	
@@ -147,10 +147,10 @@ class FlaskSessionLostGameTest(TestCase):
 				sess['incorrect_guesses'] = 'q w a z k'
 
 	def test_session_check_lost_game(self):
-		"""Test "/check-game-status" winning."""
+		"""Test "/check-game-status" losing."""
 
 		result = self.client.get('/check-guess', query_string={"letter": "y"}, follow_redirects=True)
-		self.assertIn('{"game_status":"game lost","updated_guess":"_ e _ _"}\n', result.data)
+		self.assertIn('{"game_status":"game lost","updated_guess":"_ e_ _ "}\n', result.data)
 		self.assertTrue('homepage.html')
 
 class FlaskSessionRepeatGuess(TestCase):
