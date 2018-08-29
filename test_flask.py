@@ -47,17 +47,12 @@ class FlaskRouteTests(TestCase):
 		self.assertEqual(result.status_code, 200)
 		self.assertTrue('homepage.html')
 
-	def test_check_word(self):
-		"""Test "/check-word" route."""
 
-		result = self.client.get('/check-word')
-		self.assertIsInstance(result.data, str)
-		self.assertTrue('homepage.html')
-
-class FlaskSessionTest(TestCase):
+class FlaskSessionIncorrectGuessTest(TestCase):
 	"""Flask tests with user logged in to session."""
 
 	def setUp(self):
+		"""Set up to be done before every test."""
 
 		app.config['TESTING'] = True
 		app.config['SECRET_KEY'] = "ABC"
@@ -65,18 +60,54 @@ class FlaskSessionTest(TestCase):
 
 		with self.client as c:
 			with c.session_transaction() as sess:
-				sess['secret_word'] = 'cat'
-				sess['guess_word'] = '_ _ _'
-				sess['num_guess'] = 1
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = '_ _ _ _'
+				sess['num_guesses_remain'] = 4
+				sess['correct_guesses'] = ''
+				sess['incorrect_guesses'] = ''
 
-	def test_session_check_word(self):
-		"""Test session in "/check-word" route."""
+	def test_session_check_incorrect_guess(self):
+		"""Test session incorrect guess in "/check-guess" route."""
 
-		result = self.client.get('/check-word')
+		result = self.client.get('/check-guess', query_string={"letter": 'q'}, follow_redirects=True)
 		self.assertIsInstance(result.data, str)
+		self.assertTrue('homepage.html')
+		self.assertIn('{"answer":"incorrect","incorrect_guesses":"q ","num_guesses_remain":3,"updated_guess":"_ _ _ _"}\n', result.data)
+
+class FlaskSessionCorrectGuessTest(TestCase):
+	
+	def setUp(self):
+		"""Set up to be done before every test."""
+
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
+
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = '_ _ _ _'
+				sess['num_guesses_remain'] = 4
+				sess['correct_guesses'] = ''
+				sess['incorrect_guesses'] = ''
+
+	def test_session_check_incorrect_guess(self):
+		"""Test session correct guess in "/check-guess" route."""
+
+		result = self.client.get('/check-guess', query_string={"letter": 't'}, follow_redirects=True)
+		self.assertIsInstance(result.data, str)
+		self.assertTrue('homepage.html')
+		self.assertIn('{"answer":"correct","num_guesses_remain":4,"updated_guess":"t_ _ t"}\n', result.data)
 
 
+	# def test_check_game_status(self):
+	# 	"""Test "/check-game-status" route."""
 
+	# 	result = self.client.get('/check-game-status')
+	# 	# self.assertIn('Play Again', result.data)
+	# 	# self.assertTrue('homepage.html')
 
 
 

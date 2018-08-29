@@ -7,7 +7,7 @@ function displayUpdatedWord(results) {
     if (results['answer'] === 'incorrect'){
     	$('#word').html(results['updated_guess']);
     	console.log('word updated');
-    	$('#incorrect-answer').html('That letter is not in the secret word');
+    	// $('#incorrect-answer').html('That letter is not in the secret word');
     	$('#num-guesses-remain').html(results['num_guesses_remain']);
     	$('#incorrect-guesses').html(results['incorrect_guesses']);
     	$('#letter-tried-already').html('');
@@ -19,13 +19,13 @@ function displayUpdatedWord(results) {
     	$('#num-guesses-remain').html(results['num_guesses_remain']);
     	$('#letter-tried-already').html('');
 
-    } else if (results['game-status'] === 'game won'){
+    } else if (results['game_status'] === 'game won'){
     	$('#word').html(results['updated_guess']);
     	$('#game-status-modal').modal();
     	$('#modal-text').html('You guessed the secret word correctly!');
     	$('#letter-tried-already').html('');
 
-    } else if (results['game-status'] === 'game lost'){
+    } else if (results['game_status'] === 'game lost'){
     	$('#game-status-modal').modal();
     	$('#modal-text').html('You ran out of guesses, try again!');
     	$('#letter-tried-already').html('');

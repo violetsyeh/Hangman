@@ -29,7 +29,7 @@ def index():
     return render_template('homepage.html')
 
 
-@app.route("/get-secret-word")
+@app.route("/get-secret-word", methods=['GET'])
 def generate_secret_word():
 
     # difficulty = request.form.get('difficulty')
@@ -50,7 +50,7 @@ def generate_secret_word():
     print secret_word
     return len(secret_word) * '_ '
 
-@app.route("/check-guess")
+@app.route("/check-guess", methods=['GET'])
 def check_guess():
 
     updated_guess = session['updated_guess']
@@ -108,11 +108,11 @@ def check_game_status():
     results = {}
 
     if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
-        results['game-status'] = 'game lost'
+        results['game_status'] = 'game lost'
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
     elif session['secret_word'] == session['updated_guess']:
-        results['game-status'] = 'game won'
+        results['game_status'] = 'game won'
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
         
