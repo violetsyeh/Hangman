@@ -126,9 +126,10 @@ def check_game_status():
 #Helper functions
 
 def check_repeat_letter(letter):
-    print session['incorrect_guesses']
-    print session['correct_guesses']
-    if letter in session['correct_guesses'] or session['incorrect_guesses']:
+    
+    if letter in session['correct_guesses']:
+        return False
+    elif letter in session['incorrect_guesses']:
         return False 
     else:
         return True
