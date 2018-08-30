@@ -48,6 +48,7 @@ def display_secret_word():
     session['num_guesses_remain'] = MAX_GUESSES
     session['correct_guesses'] = ''
     session['incorrect_guesses'] = ''
+    session['incorrect_whole_words'] = ''
 
     print secret_word
     return len(secret_word) * '_ '
@@ -77,6 +78,7 @@ def check_guess():
     while num_guess >= MAX_ERRORS_COUNTER:
 
         letter = request.args.get("letter").lower()
+        print letter
 
         
         if check_repeat_letter(letter):
@@ -112,7 +114,7 @@ def check_guess():
                 result['updated_guess'] = session['updated_guess']
                 result['answer'] = 'incorrect'
                 result['num_guesses_remain'] = session['num_guesses_remain']
-                result['incorrect_guesses'] = session['incorrect_guesses']
+                result['incorrect_guesses'] = session['incorrect_guesses']  + session['incorrect_whole_words']
 
                 if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
                     return redirect('/check-game-status') 
@@ -123,6 +125,33 @@ def check_guess():
             return jsonify(result)
 
         return redirect('/check-game-status')
+
+@app.route('/check-whole-word')
+def check_whole_word():
+
+    results = {}
+    word = request.args.get("word").lower()
+    print word
+
+    if session['secret_word'] == word:
+        results['game_status'] = 'game won'
+        results['updated_guess'] = session['secret_word']
+        return jsonify(results)
+
+
+    else:
+        session['num_guesses_remain'] -= 1
+        session['incorrect_whole_words'] = session['incorrect_whole_words'] + word + ' '
+
+        results['updated_guess'] = session['updated_guess']
+        results['whole_word_guess'] = 'incorrect'
+        results['num_guesses_remain'] = session['num_guesses_remain']
+        results['incorrect_guesses'] = session['incorrect_guesses'] + session['incorrect_whole_words']
+
+        if session['num_guesses_remain'] == 0:
+            return redirect('check-game-status')
+        return jsonify(results)
+
 
 
 @app.route('/check-game-status')
