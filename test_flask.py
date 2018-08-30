@@ -46,8 +46,19 @@ class FlaskRouteTests(TestCase):
 
 		result = self.client.get('/get-secret-word')
 		self.assertIn('_ ', result.data)
-		self.assertEqual(result.status_code, 200)
+		self.assertEqual(200, result.status_code)
 		self.assertTrue('homepage.html')
+		self.assertIsInstance(result.data, str)
+
+	def test_change_difficulty(self):
+		""""Test "/change-difficulty" route."""
+
+		result = self.client.get('/change-difficulty', query_string={'difficulty': 3})
+		self.assertIn('_ ', result.data)
+		self.assertEqual(200, result.status_code)
+		self.assertTrue('homepage.html')
+		self.assertIsInstance(result.data, str)
+
 
 
 class FlaskSessionIncorrectGuessTest(TestCase):
