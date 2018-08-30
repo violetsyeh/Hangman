@@ -79,6 +79,7 @@ class FlaskSessionIncorrectGuessTest(TestCase):
 				sess['num_guesses_remain'] = 6
 				sess['correct_guesses'] = ''
 				sess['incorrect_guesses'] = ''
+				sess['incorrect_whole_words'] = ''
 
 	def test_session_check_incorrect_guess(self):
 		"""Test session incorrect guess in "/check-guess" route."""
@@ -105,6 +106,7 @@ class FlaskSessionCorrectGuessTest(TestCase):
 				sess['num_guesses_remain'] = 6
 				sess['correct_guesses'] = ''
 				sess['incorrect_guesses'] = ''
+				sess['incorrect_whole_words'] = ''
 
 	def test_session_check_correct_guess(self):
 		"""Test session correct guess in "/check-guess" route."""
@@ -130,7 +132,8 @@ class FlaskSessionWonGameTest(TestCase):
 				sess['updated_guess'] = 't _ s t'
 				sess['num_guesses_remain'] = 3
 				sess['correct_guesses'] = 'ts'
-				sess['incorrect_guesses'] = 'q w a'
+				sess['incorrect_guesses'] = 'q w'
+				sess['incorrect_whole_words'] = 'te'
 
 	def test_session_check_win_game(self):
 		"""Test "/check-game-status" winning."""
@@ -155,7 +158,8 @@ class FlaskSessionLostGameTest(TestCase):
 				sess['updated_guess'] = '_ e _ _'
 				sess['num_guesses_remain'] = 1
 				sess['correct_guesses'] = 'e'
-				sess['incorrect_guesses'] = 'q w a z k'
+				sess['incorrect_guesses'] = 'q w a'
+				sess['incorrect_whole_words'] = 'te tes'
 
 	def test_session_check_lost_game(self):
 		"""Test "/check-game-status" losing."""
@@ -164,7 +168,7 @@ class FlaskSessionLostGameTest(TestCase):
 		self.assertIn('{"game_status":"game lost","updated_guess":"_ e_ _ "}\n', result.data)
 		self.assertTrue('homepage.html')
 
-class FlaskSessionRepeatGuess(TestCase):
+class FlaskSessionRepeatGuessTest(TestCase):
 
 	def setUp(self):
 		"""Set up to be done before every test."""
@@ -181,6 +185,7 @@ class FlaskSessionRepeatGuess(TestCase):
 				sess['num_guesses_remain'] = 5
 				sess['correct_guesses'] = 't'
 				sess['incorrect_guesses'] = 'z'
+				sess['incorrect_whole_words'] = ''
 
 	def test_session_repeat_guess(self):
 		"""Test helper function check_repeat_letter."""
@@ -189,9 +194,64 @@ class FlaskSessionRepeatGuess(TestCase):
 		self.assertIn('{"guess":"tried already"}\n', result.data)
 		self.assertTrue('homepage.html')
 
+class FlaskSessionWholeWordCorrectTest(TestCase):
+
+	def setUp(self):
+		"""Set up to be done before every test."""
+
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
+
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = 't _ _ t'
+				sess['num_guesses_remain'] = 5
+				sess['correct_guesses'] = 't'
+				sess['incorrect_guesses'] = 'z'
+				sess['incorrect_whole_words'] = ''
+
+	def test_session_whole_word_correct(self):
+		"""Test "/check-whole-word" route."""
+
+		result = self.client.get('/check-whole-word', query_string={"word": "test"}, follow_redirects=True)
+		self.assertIn('{"game_status":"game won","updated_guess":"test"}\n', result.data)
+		self.assertTrue('homepage.html')
+		self.assertIsInstance(result.data, str)
+
+class FlaskSessionWholeWordIncorrectTest(TestCase):
+
+	def setUp(self):
+		"""Set up to be done before every test."""
+
+		app.config['TESTING'] = True
+		app.config['SECRET_KEY'] = "ABC"
+		self.client = app.test_client()
+
+		with self.client as c:
+			with c.session_transaction() as sess:
+				"""Assign session values."""
+				sess['secret_word'] = 'test'
+				sess['updated_guess'] = 't _ _ t'
+				sess['num_guesses_remain'] = 4
+				sess['correct_guesses'] = 't '
+				sess['incorrect_guesses'] = 'z '
+				sess['incorrect_whole_words'] = 'text '
+
+	def test_session_whole_word_incorrect(self):
+		"""Test "/check-whole-word" route."""
+
+		result = self.client.get('/check-whole-word', query_string={"word": "tent"}, follow_redirects=True)
+		self.assertIn('{"incorrect_guesses":"z text tent ","num_guesses_remain":3,"updated_guess":"t _ _ t","whole_word_guess":"incorrect"}\n', result.data)
+		self.assertTrue('homepage.html')
+		self.assertIsInstance(result.data, str)
+
 ##############################################################################
 
 if __name__ == "__main__":
+	
 	import unittest
 
 	unittest.main()

@@ -44,10 +44,6 @@ function displayUpdatedWord(results) {
     $("#updated-word")[0].reset();
 }
 
-// function displayIfSolvedWord(results){
-//     if (results['game_status'] === 'game won')
-// }
-
 
 function getUpdatedWord(evt) {
 	evt.stopImmediatePropagation();
