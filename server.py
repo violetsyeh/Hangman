@@ -33,6 +33,7 @@ def index():
 
 @app.route("/get-secret-word", methods=['GET'])
 def display_secret_word():
+    """Display secret word user will guess."""
 
     # difficulty = request.form.get('difficulty')
     # payload = {'difficulty': random.randint(1, 3)}
@@ -55,6 +56,7 @@ def display_secret_word():
 
 @app.route("/change-difficulty", methods=['GET'])
 def change_difficulty():
+    """Change difficulty based on number user entered, 1-10."""
 
     difficulty = int(request.args.get("difficulty"))
     print difficulty
@@ -67,6 +69,7 @@ def change_difficulty():
 
 @app.route("/check-guess", methods=['GET'])
 def check_guess():
+    """Check letter guess if in secret word."""
 
     updated_guess = session['updated_guess']
     secret_word = session['secret_word']
@@ -128,6 +131,7 @@ def check_guess():
 
 @app.route('/check-whole-word')
 def check_whole_word():
+    """Check if whole word user entered matches secret word."""
 
     results = {}
     word = request.args.get("word").lower()
@@ -156,6 +160,7 @@ def check_whole_word():
 
 @app.route('/check-game-status')
 def check_game_status():
+    """Return status of game, won or lost."""
 
     results = {}
 
@@ -179,6 +184,7 @@ def check_game_status():
 #Helper functions
 
 def check_repeat_letter(letter):
+    """Check if letter entered has already been submitted before."""
     
     if letter in session['correct_guesses']:
         return False
@@ -188,6 +194,7 @@ def check_repeat_letter(letter):
         return True
 
 def generate_secret_word(difficulty):
+    """Generate secret word from API."""
 
     if difficulty: 
         payload = {'difficulty': difficulty}
