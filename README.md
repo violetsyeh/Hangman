@@ -14,7 +14,7 @@ Backend: Python, Flask, PostgreSQL, SQLAlchemy<br/>
 Frontend: JavaScript, jQuery, AJAX, Bootstrap, HTML5, CSS3<br/>
 APIs: LinkedIn Reach Words<br/>
 
-## <a name="features"></a>Features
+## <a name="gameplay"></a>Game Play
 ![gameplay](/static/images/readme/Hangman.gif)</br>
 
 
