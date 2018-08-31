@@ -4,7 +4,7 @@ Implemented a game of Hangman, where the user plays "against" the computer. The 
 
 ## Contents
 * [Tech Stack](#technologies)
-* [Features](#features)
+* [Game Play](#gameplay)
 * [Installation](#install)
 * [Version 2.0](#version)
 * [About Me](#aboutme)
@@ -13,6 +13,9 @@ Implemented a game of Hangman, where the user plays "against" the computer. The 
 Backend: Python, Flask, PostgreSQL, SQLAlchemy<br/>
 Frontend: JavaScript, jQuery, AJAX, Bootstrap, HTML5, CSS3<br/>
 APIs: LinkedIn Reach Words<br/>
+
+## <a name="features"></a>Features
+![gameplay](/static/images/readme/Hangman.gif)</br>
 
 
 ## <a name="install"></a>Installation
@@ -40,13 +43,6 @@ Install the dependencies:
 pip install -r requirements.txt
 ```
 
-Set up the database:
-
-```
-createdb hangman
-python model.py
-```
-
 Run the app:
 
 ```
@@ -54,6 +50,11 @@ python server.py
 ```
 
 You can now navigate to 'localhost:5000/' to access Hangman.
+
+## <a name="version"></a>Version 2.0
+* Leaderboard to display top scores
+* Cache API results to only make one API request
+* Cache secret words the user has already solved before
 
 ## <a name="aboutme"></a>About Me
 Violet Yeh is a Software Engineer in the Bay Area.
