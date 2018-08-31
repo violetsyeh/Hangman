@@ -21,7 +21,7 @@ class FlaskTestsBasic(TestCase):
 		"""Test homepage."""
 
 		result = self.client.get("/")
-		self.assertIn('Guessing Word Game', result.data)
+		self.assertIn('Hangman', result.data)
 		self.assertEqual(result.status_code, 200)
 		self.assertIn('Guess the Secret Word', result.data)
 		self.assertTrue('homepage.html')

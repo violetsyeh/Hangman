@@ -185,7 +185,10 @@ def check_game_status():
 
 def check_repeat_letter(letter):
     """Check if letter entered has already been submitted before."""
-    
+    ######################################
+    #####################################
+    ####################################
+    ### make it return true because it is checking if there is a repeat letter 
     if letter in session['correct_guesses']:
         return False
     elif letter in session['incorrect_guesses']:
