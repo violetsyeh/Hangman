@@ -27,6 +27,8 @@ WORDS_URL = 'http://app.linkedin-reach.io/words'
 @app.route("/")
 def index():
     """Homepage."""
+
+    #Clear session for each game
     session.clear()
     return render_template('homepage.html')
 
@@ -35,15 +37,10 @@ def index():
 def display_secret_word():
     """Display secret word user will guess."""
 
-    # difficulty = request.form.get('difficulty')
-    # payload = {'difficulty': random.randint(1, 3)}
-    # payload = {'difficulty': 1}
-    # words = requests.get(url=WORDS_URL, params=payload)
-    # words = str(words.text)
-    # words = words.split()
-    # secret_word = random.choice(words)
+    #Retrieve secret word from API through helper function
     secret_word = generate_secret_word(None)
 
+    #Establish sessions to keep track of game
     session['secret_word'] = secret_word
     session['updated_guess'] = len(secret_word) * '_ '
     session['num_guesses_remain'] = MAX_GUESSES
@@ -58,9 +55,12 @@ def display_secret_word():
 def change_difficulty():
     """Change difficulty based on number user entered, 1-10."""
 
+    #Retrieve difficulty level to change secret word
     difficulty = int(request.args.get("difficulty"))
-    print difficulty
+
+    #Generate new secret word based on provided difficulty level
     secret_word = generate_secret_word(difficulty)
+    
     print secret_word
 
     return len(secret_word) * '_ '
@@ -78,15 +78,17 @@ def check_guess():
     result = {}
     guess_status = 'incorrect guess'
 
+    #While guesses are still available for user
     while num_guess >= MAX_ERRORS_COUNTER:
 
         letter = request.args.get("letter").lower()
-        print letter
 
-        
+        #Check if letter has been submitted already
         if check_repeat_letter(letter):
 
             for i in range(len(secret_word)):
+
+                #Update the guess displayed for occurrences of letter
 
                 if secret_word[i] == letter:
                     updated_guess = updated_guess + letter
@@ -98,6 +100,7 @@ def check_guess():
                 else:
                     updated_guess = updated_guess + '_ '
 
+                #Update session after guess check
                 session['updated_guess'] = updated_guess
                 session['correct_guesses'] = session['correct_guesses'] + letter
             
@@ -106,10 +109,12 @@ def check_guess():
                 result['answer'] = 'correct'
                 result['num_guesses_remain'] = num_guess
 
+                #Check if user solved entire secret word
                 if secret_word == session['updated_guess']:
                     return redirect('/check-game-status')
                 return jsonify(result)
 
+            #Guess is incorrect, update session    
             if guess_status == 'incorrect guess':
                 session['num_guesses_remain'] -= 1
                 session['incorrect_guesses'] = session['incorrect_guesses'] + letter + ' '
@@ -119,10 +124,13 @@ def check_guess():
                 result['num_guesses_remain'] = session['num_guesses_remain']
                 result['incorrect_guesses'] = session['incorrect_guesses']  + session['incorrect_whole_words']
 
+                #If user has no more guesses, lost game
                 if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
                     return redirect('/check-game-status') 
 
-                return jsonify(result)                
+                return jsonify(result)
+
+        #Letter has been submitted already                
         else:
             result['guess'] = 'tried already'
             return jsonify(result)
@@ -135,14 +143,14 @@ def check_whole_word():
 
     results = {}
     word = request.args.get("word").lower()
-    print word
 
+    #If word guess is correct, win game
     if session['secret_word'] == word:
         results['game_status'] = 'game won'
         results['updated_guess'] = session['secret_word']
         return jsonify(results)
 
-
+    #Else update session and continue game
     else:
         session['num_guesses_remain'] -= 1
         session['incorrect_whole_words'] = session['incorrect_whole_words'] + word + ' '
@@ -152,6 +160,7 @@ def check_whole_word():
         results['num_guesses_remain'] = session['num_guesses_remain']
         results['incorrect_guesses'] = session['incorrect_guesses'] + session['incorrect_whole_words']
 
+        #Check if user has zero guesses remaining
         if session['num_guesses_remain'] == 0:
             return redirect('check-game-status')
         return jsonify(results)
@@ -165,11 +174,15 @@ def check_game_status():
     results = {}
 
     if session['num_guesses_remain'] == MAX_ERRORS_COUNTER:
+        #If user runs out of guesses, lost game.
+
         results['game_status'] = 'game lost'
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
 
     elif session['secret_word'] == session['updated_guess']:
+        #If user guessed the secret word correctly, win game.
+
         results['game_status'] = 'game won'
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
@@ -195,6 +208,8 @@ def generate_secret_word(difficulty):
     """Generate secret word from API."""
 
     if difficulty: 
+        #If user wants to change difficulty
+
         payload = {'difficulty': difficulty}
         words = requests.get(url=WORDS_URL, params=payload)
         words = str(words.text)
@@ -202,7 +217,9 @@ def generate_secret_word(difficulty):
         secret_word = random.choice(words)
         return secret_word
     else:
-        payload = {'difficulty': random.randint(1, 3)}
+        #On page load, secret word picked randomly.
+
+        payload = {'difficulty': random.randint(1, 4)}
         words = requests.get(url=WORDS_URL, params=payload)
         words = str(words.text)
         words = words.split()
@@ -212,9 +229,9 @@ def generate_secret_word(difficulty):
 
 
 if __name__ == "__main__":
-    # We have to set debug=True here, since it has to be True at the
-    # point that we invoke the DebugToolbarExtension
-    app.debug = True
+    #Set to False for production
+    #Set to True for debugging purposes
+    app.debug = False
     # make sure templates, etc. are not cached in debug mode
     app.jinja_env.auto_reload = app.debug
 
