@@ -187,7 +187,12 @@ def check_game_status():
         results['updated_guess'] = session['updated_guess']
         return jsonify(results)
         
-    
+
+@app.route('/error_page')
+def display_error_page():
+    """Error Page."""
+
+    return render_template('error_page.html')
 
 
 
@@ -212,21 +217,31 @@ def generate_secret_word(difficulty):
 
         payload = {'difficulty': difficulty}
         words = requests.get(url=WORDS_URL, params=payload)
-        words = str(words.text)
-        words = words.split()
-        secret_word = random.choice(words)
-        return secret_word
+        if check_status_code(words):
+            words = str(words.text)
+            words = words.split()
+            secret_word = random.choice(words)
+            return secret_word
     else:
         #On page load, secret word picked randomly.
 
         payload = {'difficulty': random.randint(1, 4)}
         words = requests.get(url=WORDS_URL, params=payload)
-        words = str(words.text)
-        words = words.split()
-        secret_word = random.choice(words)
+        if check_status_code(words):
+            words = str(words.text)
+            words = words.split()
+            secret_word = random.choice(words)
 
-        return secret_word
+            return secret_word
 
+def check_status_code(api_request):
+    """Check if API request was successful."""
+
+    if api_request.status_code == 200:
+        return True
+
+    else:
+        return redirect('/error_page')
 
 if __name__ == "__main__":
     #Set to False for production
