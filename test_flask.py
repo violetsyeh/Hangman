@@ -187,7 +187,7 @@ class FlaskSessionRepeatGuessTest(TestCase):
 				sess['incorrect_guesses'] = 'z'
 				sess['incorrect_whole_words'] = ''
 
-	def test_session_repeat_guess(self):
+	def test_session_repeat_letter(self):
 		"""Test helper function check_repeat_letter."""
 
 		result = self.client.get('/check-guess', query_string={"letter": "z"}, follow_redirects=True)
