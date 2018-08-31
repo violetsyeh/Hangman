@@ -13,7 +13,7 @@
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="">Hangman</a>
+        <a class="navbar-brand" href="#">Hangman</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -55,17 +55,16 @@
         <form action="/check-guess" method="GET" id="updated-word">
             <div class="form-group">
                 <label for="formGroupExampleInput">Guess a letter</label>
-                <input type="text" class="form-control" name="letter-guess-field" id="letter-guess-field" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter." onfocus="this.placeholder = ''" onblur="this.placeholder = ''">
+                <input type="text" class="form-control" name="letter-guess-field" id="letter-guess-field" placeholder="Enter a letter here" maxlength="1" pattern="[A-Za-z]{1}" title="Please only enter an alphabet letter.">
                 <button type="submit" class="btn btn-primary" name="submit" id="submit">Submit</button>
             </div>
             <div class="form-group">
                 <label for="formGroupExampleInput2">Feeling Confident?</label>
-                <input type="text" class="form-control" id="full-word-field" placeholder="Solve the whole word" title="Please only enter valid characters." onfocus="this.placeholder = ''" onblur="this.placeholder = ''">
+                <input type="text" class="form-control" id="full-word-field" placeholder="Solve the whole word" pattern="[A-Za-z]+" title="Please only enter valid characters.">
             </div>
             <button type="submit" class="btn btn-primary" name="submit" id="submit">Submit</button>
 
         </form>
-        <script src="/static/js/update-word.js"></script>
     </div>
 
     <div class="modal" tabindex="-1" role="dialog" id="game-status-modal">
