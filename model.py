@@ -20,10 +20,8 @@ class Score(db.Model):
 
     score_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String(64), nullable=True)
-    score = db.Column(db.Integer, nullable=True)
-    date = db.Column(db.DateTime, nullable=True)
-
-
+    score = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
 
 ##############################################################################
@@ -46,3 +44,6 @@ if __name__ == "__main__":
     from server import app
     connect_to_db(app)
     print("Connected to DB.")
+    db.create_all()
+    print("Created tables")
+
