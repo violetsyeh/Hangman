@@ -14,7 +14,7 @@ db = SQLAlchemy()
 # Model definitions
 
 class Score(db.Model):
-    """User of ratings website."""
+    """Scores of Hangman."""
 
     __tablename__ = "scores"
 
