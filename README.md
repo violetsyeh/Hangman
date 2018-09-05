@@ -53,6 +53,7 @@ You can now navigate to 'localhost:5000/' to access Hangman.
 
 ## <a name="version"></a>Version 2.0
 * Leaderboard to display top scores
+* Give a hint
 * Cache API results to only make one API request
 * Cache secret words the user has already solved before
 
